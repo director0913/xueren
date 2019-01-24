@@ -31,6 +31,7 @@ function getTitle($pages){
 						$id = insertPost($info);
 						if ($id) {
 							$my_post['ID'] = $id;
+							$info['info'] = guolv($info['info']);
 							$info['info'] = $DX_Auto_Save_Images->post_save_images($info['info'],$id);
 							$my_post['post_content'] = $info['info'];
 							wp_update_post( $my_post );
@@ -44,6 +45,16 @@ function getTitle($pages){
 
 	return $info;
 }
+function guolv($str){
+    $str = preg_replace( "@<script(.*?)</script>@is", "", $str );
+    $str = preg_replace( "@<iframe(.*?)</iframe>@is", "", $str );
+    $str = preg_replace( "@<style(.*?)</style>@is", "", $str );
+    $str = preg_replace( "@<(.*?)>@is", "", $str );
+    //# 代表换行
+    $str =str_replace("#","<br>",$str);
+    return $str;
+}
+
 // 获取页码
 function getPages($url){
 
@@ -78,10 +89,6 @@ function insertPost($v){
 	global $wpdb;
 	$post_date = date('Y-m-d H:i:s',time());
 	$post_date_gmt = date('Y-m-d H:i:s',time());
-	$script="'<script[^>]*?>.*?</script>'si ";
-	$style="'<style[^>]*?>.*?</style>'si ";
-  	$v['info']=preg_replace("$script","",$v['info']);
-  	$v['info']=preg_replace("$style","",$v['info']);
 	$parm['post_author']           = '7';
 	$parm['post_date']             = $post_date;
 	$parm['post_date_gmt']         = $post_date;
